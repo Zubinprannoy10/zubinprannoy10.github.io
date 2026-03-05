@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ignitious Zubin Prannoy — Sales & Revenue Operations</title>
+<meta name="description" content="Sales Operations Engineer. Salesforce, HubSpot, RevOps, GTM. Based in Bengaluru, India."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #060709;
+    --surface:  #090c10;
+    --card:     #0c1018;
+    --border:   #141c28;
+    --border2:  #1e2d42;
+    --amber:    #c8deff;
+    --amber-dim:#2a4a7f;
+    --cyan:     #4d8fff;
+    --text:     #d8e6f8;
+    --muted:    #4a6080;
+    --white:    #eef4ff;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Karla', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--cyan); color: #000; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.4;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+  @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes scanMove { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
+  @keyframes pulseRing{ 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.04)} }
+  @keyframes countUp  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes dash     { to { stroke-dashoffset: 0; } }
+  @keyframes gradShift{ 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── CURSOR ── */
+  * { cursor: none !important; }
+  #cursor {
+    width: 8px; height: 8px;
+    background: var(--amber);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s ease, width .2s ease, height .2s ease;
+    mix-blend-mode: difference;
+  }
+  #cursor.expand { width: 40px; height: 40px; background: transparent; border: 1px solid var(--amber); }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 16px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(6,7,9,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    animation: fadeIn .8s ease both;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 14px;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--white);
+  }
+  .nav-logo span { color: var(--amber); }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 12px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+    text-decoration: none;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; left: 0; bottom: -2px;
+    width: 0; height: 1px; background: var(--amber);
+    transition: width .2s;
+  }
+  .nav-links a:hover { color: var(--amber); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 48px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+  .hero-scan {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(200,222,255,.03) 50%, transparent 100%);
+    height: 200px; width: 100%;
+    animation: scanMove 6s linear infinite;
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--amber);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-tag::before {
+    content: ''; width: 40px; height: 1px; background: var(--amber);
+  }
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 800; line-height: 0.95;
+    color: var(--white); letter-spacing: -2px;
+    margin-bottom: 8px;
+    animation: fadeUp .7s .1s ease both;
+  }
+  .hero-name .first { display: block; }
+  .hero-name .last  { display: block; color: var(--amber); }
+  .hero-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(13px, 2vw, 18px);
+    color: var(--muted); margin-bottom: 32px;
+    animation: fadeUp .7s .2s ease both;
+  }
+  .hero-role .typed { color: var(--cyan); }
+  .cursor-blink { animation: blink 1s step-end infinite; color: var(--cyan); }
+  .hero-desc {
+    max-width: 540px;
+    font-size: 16px; color: var(--muted); line-height: 1.8;
+    margin-bottom: 48px;
+    animation: fadeUp .7s .3s ease both;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp .7s .4s ease both;
+  }
+  .btn {
+    font-family: 'Karla', sans-serif;
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 14px 28px; border-radius: 4px;
+    text-decoration: none; transition: all .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary {
+    background: var(--amber); color: #000;
+    box-shadow: 0 0 32px rgba(200,222,255,.2);
+  }
+  .btn-primary:hover { background: #daeaff; box-shadow: 0 0 48px rgba(200,222,255,.35); }
+  .btn-outline {
+    border: 1px solid var(--border2); color: var(--text);
+  }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* ── METRICS STRIP ── */
+  .metrics-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border);
+    margin: 0 48px;
+    border-radius: 8px; overflow: hidden;
+  }
+  .metric-cell {
+    background: var(--card);
+    padding: 24px 28px;
+    position: relative; overflow: hidden;
+  }
+  .metric-cell::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--amber); transform: scaleX(0);
+    transform-origin: left; transition: transform .4s .2s;
+  }
+  .metric-cell.visible::before { transform: scaleX(1); }
+  .metric-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px; font-weight: 800;
+    color: var(--white); line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-num span { color: var(--amber); }
+  .metric-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 100px 48px; }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 64px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--amber);
+    letter-spacing: 2px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800; color: var(--white);
+    letter-spacing: -1px;
+  }
+  .section-line {
+    flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--surface); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px 24px;
+    transition: border-color .2s, transform .2s;
+    position: relative; overflow: hidden;
+  }
+  .skill-card:hover { border-color: var(--amber); transform: translateY(-2px); }
+  .skill-card::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    opacity: 0; transition: opacity .2s;
+  }
+  .skill-card:hover::after { opacity: 1; }
+  .skill-category {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tag {
+    font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 3px;
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border2);
+  }
+  .skill-tag.hot {
+    background: rgba(245,158,11,.1);
+    border-color: var(--amber-dim);
+    color: var(--amber);
+  }
+
+  /* ── EXPERIENCE ── */
+  .exp-timeline { position: relative; }
+  .exp-timeline::before {
+    content: ''; position: absolute;
+    left: 16px; top: 0; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .exp-item {
+    padding-left: 56px; padding-bottom: 56px;
+    position: relative;
+  }
+  .exp-item:last-child { padding-bottom: 0; }
+  .exp-dot {
+    position: absolute; left: 8px; top: 6px;
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    border: 2px solid var(--amber);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .exp-dot::after {
+    content: ''; width: 7px; height: 7px;
+    border-radius: 50%; background: var(--amber);
+  }
+  .exp-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--amber);
+    letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .exp-role {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--white); margin-bottom: 2px;
+  }
+  .exp-company {
+    font-size: 14px; color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .exp-bullets { list-style: none; }
+  .exp-bullets li {
+    font-size: 14px; color: var(--text);
+    line-height: 1.7; margin-bottom: 8px;
+    padding-left: 16px; position: relative;
+  }
+  .exp-bullets li::before {
+    content: '→'; position: absolute; left: 0;
+    color: var(--amber); font-size: 12px; top: 2px;
+  }
+  .exp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .exp-tag {
+    font-size: 11px; padding: 3px 9px;
+    border-radius: 3px;
+    background: rgba(77,143,255,.08);
+    color: var(--cyan);
+    border: 1px solid rgba(77,143,255,.18);
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px;
+    transition: border-color .2s, transform .2s;
+    display: flex; flex-direction: column;
+  }
+  .project-card:hover { border-color: var(--amber); transform: translateY(-3px); }
+  .project-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--white); margin-bottom: 10px;
+  }
+  .project-desc {
+    font-size: 13px; color: var(--muted);
+    line-height: 1.7; flex: 1; margin-bottom: 16px;
+  }
+  .project-stack { display: flex; flex-wrap: wrap; gap: 6px; }
+  .proj-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    color: var(--cyan); text-decoration: none;
+    border-bottom: 1px solid rgba(77,143,255,.3);
+    transition: border-color .2s, color .2s;
+    padding-bottom: 1px;
+  }
+  .proj-link:hover { color: var(--amber); border-color: var(--amber); }
+  .stack-tag {
+    font-size: 11px; padding: 3px 8px;
+    border-radius: 3px; background: var(--surface);
+    color: var(--text); border: 1px solid var(--border2);
+  }
+
+  /* ── CERTS ── */
+  #certs { background: var(--surface); }
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .cert-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color .2s;
+  }
+  .cert-item:hover { border-color: var(--amber); }
+  .cert-icon {
+    width: 32px; height: 32px; border-radius: 6px;
+    background: rgba(245,158,11,.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; color: var(--amber);
+  }
+  .cert-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+  .cert-issuer { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── CONTACT ── */
+  #contact { text-align: center; }
+  .contact-tagline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 800; color: var(--white);
+    letter-spacing: -1px; margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .contact-tagline .highlight {
+    background: linear-gradient(135deg, var(--amber), #ffffff, var(--cyan));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradShift 4s ease infinite;
+  }
+  .contact-sub {
+    color: var(--muted); font-size: 16px;
+    max-width: 480px; margin: 0 auto 40px;
+  }
+  .contact-links {
+    display: flex; gap: 16px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 64px;
+  }
+  .contact-link {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    text-decoration: none; padding: 12px 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: all .2s;
+  }
+  .contact-link:hover {
+    border-color: var(--amber); color: var(--amber);
+    background: rgba(245,158,11,.05);
+  }
+  .footer {
+    padding: 24px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted);
+  }
+
+  /* ── STATUS INDICATOR ── */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 20px;
+    background: rgba(200,222,255,.07);
+    border: 1px solid rgba(200,222,255,.18);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--amber);
+    letter-spacing: 1px;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #c8deff;
+    box-shadow: 0 0 10px rgba(200,222,255,.8);
+    animation: pulseRing 2s ease-in-out infinite;
+  }
+
+  /* ── MOBILE ── */
+  @media(max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    #hero, section { padding: 80px 20px; }
+    .metrics-strip { grid-template-columns: repeat(2,1fr); margin: 0 20px; }
+    .footer { padding: 20px; flex-direction: column; gap: 8px; }
+    * { cursor: auto !important; }
+    #cursor { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">IZP<span>.</span></div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#certs">Certs</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+
+  <div class="hero-tag" style="margin-bottom:12px">
+    <span class="status-pill"><span class="status-dot"></span>Open to work</span>
+  </div>
+
+  <div style="margin-bottom:12px">
+    <div class="hero-tag">Sales & Revenue Operations Engineer</div>
+  </div>
+
+  <h1 class="hero-name">
+    <span class="first">Ignitious Zubin</span>
+    <span class="last">Prannoy</span>
+  </h1>
+
+  <div class="hero-role">
+    &gt; <span class="typed" id="typed-text"></span><span class="cursor-blink">_</span>
+  </div>
+
+  <p class="hero-desc">
+    I build the ops systems that make sales teams run faster — Salesforce automations,
+    CRM integrations, pipeline hygiene, and the data infrastructure that turns noise
+    into decisions. Based in Bengaluru. Always shipping.
+  </p>
+
+  <div class="hero-cta">
+    <a href="mailto:ignitiousprannoy72@gmail.com" class="btn btn-primary">
+      → Let's Talk
+    </a>
+    <a href="https://linkedin.com/in/ignitious-zubin-prannoy" target="_blank" class="btn btn-outline">
+      LinkedIn Profile
+    </a>
+    <a href="#" class="btn btn-outline" id="dl-resume">
+      ↓ Resume
+    </a>
+  </div>
+</section>
+
+<!-- METRICS -->
+<div class="metrics-strip reveal">
+  <div class="metric-cell">
+    <div class="metric-num"><span class="count" data-target="90">0</span>%</div>
+    <div class="metric-label">Pipeline Data Hygiene</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num"><span class="count" data-target="6">0</span>+</div>
+    <div class="metric-label">Certifications Earned</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num"><span class="count" data-target="5">0</span>+</div>
+    <div class="metric-label">CRM Tools Mastered</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num"><span class="count" data-target="1">0</span>yr</div>
+    <div class="metric-label">Hands-on Ops Experience</div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header reveal">
+    <span class="section-num">01 /</span>
+    <h2 class="section-title">Tools & Stack</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-category">CRM Platforms</div>
+      <div class="skill-tags">
+        <span class="skill-tag hot">Salesforce</span>
+        <span class="skill-tag hot">HubSpot</span>
+        <span class="skill-tag">Outreach</span>
+        <span class="skill-tag">Apollo.io</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">Quote-to-Cash</div>
+      <div class="skill-tags">
+        <span class="skill-tag hot">DealHub</span>
+        <span class="skill-tag hot">DocuSign</span>
+        <span class="skill-tag">Contract Management</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">Salesforce Development</div>
+      <div class="skill-tags">
+        <span class="skill-tag hot">Salesforce Flows</span>
+        <span class="skill-tag hot">Apex</span>
+        <span class="skill-tag hot">SOQL</span>
+        <span class="skill-tag">Visualforce</span>
+        <span class="skill-tag">Custom Objects</span>
+        <span class="skill-tag">Validation Rules</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">Programming & Data</div>
+      <div class="skill-tags">
+        <span class="skill-tag hot">Python</span>
+        <span class="skill-tag hot">SQL</span>
+        <span class="skill-tag">Pandas</span>
+        <span class="skill-tag">Jupyter</span>
+        <span class="skill-tag">Scikit-learn</span>
+        <span class="skill-tag">TypeScript</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">Compliance & Reporting</div>
+      <div class="skill-tags">
+        <span class="skill-tag hot">Drata</span>
+        <span class="skill-tag hot">Compliance Monitoring</span>
+        <span class="skill-tag">Cross-team Reporting</span>
+        <span class="skill-tag">Salesforce Dashboards</span>
+        <span class="skill-tag">Pipeline Analytics</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">AI & Productivity</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Claude</span>
+        <span class="skill-tag">ChatGPT</span>
+        <span class="skill-tag">Cursor</span>
+        <span class="skill-tag">Perplexity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-header reveal">
+    <span class="section-num">02 /</span>
+    <h2 class="section-title">Experience</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="exp-timeline">
+
+    <div class="exp-item reveal">
+      <div class="exp-dot"></div>
+      <div class="exp-period">AUG 2025 — PRESENT</div>
+      <div class="exp-role">Sales Operations Engineer</div>
+      <div class="exp-company">Kognitos · Bengaluru, India · AI SaaS</div>
+      <ul class="exp-bullets">
+        <li>Manage day-to-day Salesforce CRM administration and automation supporting sales leaders, AEs, and GTM teams</li>
+        <li>Build and maintain custom Visualforce components for internal sales automations and operational workflows</li>
+        <li>Manage sales quotes via DealHub and coordinate DocuSign signatures for deal progression</li>
+        <li>Achieved ~90% pipeline data hygiene through daily deduplication and opportunity cleanup</li>
+        <li>Monitor Salesforce-integrated automations including lead round-robin routing and MEDDICC field updates via Fathom</li>
+        <li>Build reports and dashboards to track pipeline health and key sales metrics for leadership</li>
+        <li>Monitor compliance posture using Drata — flag out-of-order controls and report findings to the corresponding team for resolution</li>
+        <li>Support bi-directional integrations: HubSpot ↔ Salesforce and Salesforce ↔ Outreach</li>
+      </ul>
+      <div class="exp-tags">
+        <span class="exp-tag">Salesforce Admin</span>
+        <span class="exp-tag">Apex</span>
+        <span class="exp-tag">SOQL</span>
+        <span class="exp-tag">Visualforce</span>
+        <span class="exp-tag">DealHub</span>
+        <span class="exp-tag">DocuSign</span>
+        <span class="exp-tag">Drata</span>
+        <span class="exp-tag">HubSpot</span>
+        <span class="exp-tag">Outreach</span>
+        <span class="exp-tag">MEDDICC</span>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-dot"></div>
+      <div class="exp-period">FEB 2025 — AUG 2025</div>
+      <div class="exp-role">Sales Operations Intern</div>
+      <div class="exp-company">Kognitos · Bengaluru, India</div>
+      <ul class="exp-bullets">
+        <li>Administered and customized Salesforce CRM — objects, fields, validation rules, record types, and Flows</li>
+        <li>Designed a streamlined Lead Conversion button, reducing lead processing time by 30%</li>
+        <li>Built dashboards providing real-time visibility into pipeline health, lead aging, and conversion metrics</li>
+        <li>Monitored integrations across HubSpot, Outreach, and Apollo.io ensuring full-funnel data sync</li>
+        <li>Authored internal SOP documentation for recurring sales operations processes</li>
+      </ul>
+      <div class="exp-tags">
+        <span class="exp-tag">Salesforce Flows</span>
+        <span class="exp-tag">Apollo.io</span>
+        <span class="exp-tag">Lead Management</span>
+        <span class="exp-tag">SOP Writing</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background:var(--surface)">
+  <div class="section-header reveal">
+    <span class="section-num">03 /</span>
+    <h2 class="section-title">Projects</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-type">Neurotechnology · Signal Processing · 🏆 Grant Winner</div>
+      <div class="project-name">MUSE — EMG Human Computer Interface</div>
+      <div class="project-desc">
+        Silent speech recognition system using EMG signals from an OpenBCI Cyton board.
+        Captures muscle signals, extracts features, and classifies intended speech — no voice needed.
+        Recipient of the <strong style="color:var(--amber)">OpenBCI Discovery Program Grant (2023)</strong>.
+      </div>
+      <div class="project-stack" style="margin-bottom:12px">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">OpenBCI</span>
+        <span class="stack-tag">NumPy</span>
+        <span class="stack-tag">Scikit-learn</span>
+        <span class="stack-tag">Signal Processing</span>
+      </div>
+      <a href="https://github.com/Zubinprannoy10/MUSE-EMG-Based-Human-Computer-Interface" target="_blank" class="proj-link">↗ View on GitHub</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-type">Machine Learning · Predictive Analytics</div>
+      <div class="project-name">Rotten Tomatoes Rating Predictor</div>
+      <div class="project-desc">
+        Random Forest model with GridSearchCV predicting audience scores.
+        Applied SHAP analysis and PCA for feature importance — the same analytical
+        framework used in sales pipeline forecasting and revenue prediction.
+      </div>
+      <div class="project-stack" style="margin-bottom:12px">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">Scikit-learn</span>
+        <span class="stack-tag">SHAP</span>
+        <span class="stack-tag">PCA</span>
+        <span class="stack-tag">Pandas</span>
+        <span class="stack-tag">Jupyter</span>
+      </div>
+      <a href="https://github.com/Zubinprannoy10/Rotten_tomatoes_prediction" target="_blank" class="proj-link">↗ View on GitHub</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-type">Full-Stack · Community Platform</div>
+      <div class="project-name">StoryForge — Reddit Collab Game</div>
+      <div class="project-desc">
+        Live multiplayer narrative game built directly on Reddit's platform using Devvit.
+        Users contribute words, solve puzzles, and vote to steer evolving stories — all
+        inside Reddit's native interface.
+      </div>
+      <div class="project-stack" style="margin-bottom:12px">
+        <span class="stack-tag">TypeScript</span>
+        <span class="stack-tag">Node.js</span>
+        <span class="stack-tag">Devvit</span>
+        <span class="stack-tag">Cursor</span>
+      </div>
+      <a href="https://github.com/Zubinprannoy10/storyforge_reddit_hack" target="_blank" class="proj-link">↗ View on GitHub</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-type">Hardware · Embedded Systems · IoT</div>
+      <div class="project-name">BeakHen — Bluetooth Item Tracker</div>
+      <div class="project-desc">
+        Bluetooth-based proximity detector built on an ESP32 microcontroller.
+        Tracks easily misplaced items like keys in real time using BLE scanning —
+        low power, no internet required.
+      </div>
+      <div class="project-stack" style="margin-bottom:12px">
+        <span class="stack-tag">C++</span>
+        <span class="stack-tag">ESP32</span>
+        <span class="stack-tag">Bluetooth LE</span>
+        <span class="stack-tag">Embedded C</span>
+      </div>
+      <a href="https://github.com/Zubinprannoy10/BeakHen" target="_blank" class="proj-link">↗ View on GitHub</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-type">AI Agent · Job Hunt Automation</div>
+      <div class="project-name">Job Hunt Command Center</div>
+      <div class="project-desc">
+        AI-powered pipeline: finds Sales Ops / RevOps jobs → tailors resume per role →
+        finds connections at target companies via Apollo.io → drafts personalized LinkedIn
+        and email outreach. Built as a React dashboard on Claude API + MCP.
+      </div>
+      <div class="project-stack" style="margin-bottom:12px">
+        <span class="stack-tag">React</span>
+        <span class="stack-tag">Claude API</span>
+        <span class="stack-tag">Apollo.io MCP</span>
+        <span class="stack-tag">Web Search</span>
+      </div>
+      <a href="https://github.com/Zubinprannoy10" target="_blank" class="proj-link">↗ GitHub Profile</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- CERTS -->
+<section id="certs">
+  <div class="section-header reveal">
+    <span class="section-num">04 /</span>
+    <h2 class="section-title">Certifications</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="certs-grid">
+    <div class="cert-item reveal">
+      <div class="cert-icon">☁</div>
+      <div>
+        <div class="cert-name">Salesforce Administrator — Real Time Project</div>
+        <div class="cert-issuer">Udemy · Feb 2025</div>
+      </div>
+    </div>
+    <div class="cert-item reveal">
+      <div class="cert-icon">⚡</div>
+      <div>
+        <div class="cert-name">Salesforce Admin Certification Lightning Flows</div>
+        <div class="cert-issuer">Udemy · Mar 2025</div>
+      </div>
+    </div>
+    <div class="cert-item reveal">
+      <div class="cert-icon">📊</div>
+      <div>
+        <div class="cert-name">Salesforce Lightning Reports & Dashboards</div>
+        <div class="cert-issuer">Udemy · Mar 2025</div>
+      </div>
+    </div>
+    <div class="cert-item reveal">
+      <div class="cert-icon">🎓</div>
+      <div>
+        <div class="cert-name">Salesforce Admin Masterclass for Beginners</div>
+        <div class="cert-issuer">Udemy · Mar 2025</div>
+      </div>
+    </div>
+    <div class="cert-item reveal">
+      <div class="cert-icon">🟠</div>
+      <div>
+        <div class="cert-name">HubSpot CRM Specialist</div>
+        <div class="cert-issuer">HubSpot Academy · Mar 2025</div>
+      </div>
+    </div>
+    <div class="cert-item reveal">
+      <div class="cert-icon">📈</div>
+      <div>
+        <div class="cert-name">HubSpot Marketing Strategy</div>
+        <div class="cert-issuer">HubSpot Academy · 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-tagline reveal">
+    Let's build something<br/>
+    <span class="highlight">that moves the pipeline.</span>
+  </div>
+  <p class="contact-sub reveal">
+    Open to Sales Ops, RevOps, GTM Ops, Marketing Ops, and CRM Admin roles.
+    Based in Bengaluru — open to remote.
+  </p>
+  <div class="contact-links reveal">
+    <a href="mailto:ignitiousprannoy72@gmail.com" class="contact-link">
+      ✉ ignitiousprannoy72@gmail.com
+    </a>
+    <a href="tel:+919940249483" class="contact-link">
+      ☎ +91 99402 49483
+    </a>
+    <a href="https://www.linkedin.com/in/ignitious-zubin-prannoy-b61a791bb/" target="_blank" class="contact-link">
+      ↗ LinkedIn
+    </a>
+    <a href="https://github.com/Zubinprannoy10" target="_blank" class="contact-link">
+      ↗ GitHub
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>© 2025 Ignitious Zubin Prannoy</div>
+  <div style="font-size:10px;color:var(--border2)">Built with HTML, CSS & ambition.</div>
+  <div>Bengaluru, India</div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,.skill-card,.project-card,.cert-item,.exp-dot').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+});
+
+// Typewriter
+const phrases = [
+  'Salesforce Admin & Developer',
+  'Revenue Operations Engineer',
+  'GTM Ops Specialist',
+  'CRM Integration Builder',
+  'Pipeline Automation Expert'
+];
+let pi = 0, ci = 0, deleting = false;
+function type() {
+  const el = document.getElementById('typed-text');
+  const word = phrases[pi];
+  if (!deleting) {
+    el.textContent = word.slice(0, ++ci);
+    if (ci === word.length) { deleting = true; setTimeout(type, 2000); return; }
+  } else {
+    el.textContent = word.slice(0, --ci);
+    if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+  }
+  setTimeout(type, deleting ? 40 : 70);
+}
+type();
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Count up numbers
+function animateCount(el) {
+  const target = +el.dataset.target;
+  const duration = 1200;
+  const start = performance.now();
+  function frame(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(ease * target);
+    if (progress < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.count').forEach(animateCount);
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.metrics-strip').forEach(el => countObs.observe(el));
+</script>
+</body>
+</html>
